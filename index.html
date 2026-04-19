@@ -10,45 +10,42 @@
         }
 
         body, html {
-            margin: 0; padding: 0; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: 'Segoe UI', sans-serif;
-            overflow: hidden;
+            background: transparent;
         }
 
         .fondo-pantalla {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url('fondo.png'); 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('fondo.png');
             background-size: cover;
             background-position: center;
             opacity: 0.2;
             z-index: -1;
         }
 
-        /* ESCENARIO - ahora se adapta al tamaño de la imagen */
         .escenario {
             perspective: 1500px;
             z-index: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.3s ease;
             padding: 20px;
         }
 
-        /* Media query para pantallas pequeñas */
-        @media (max-width: 500px) {
+        /* Ajuste para móviles */
+        @media (max-width: 600px) {
             .escenario {
-                transform: scale(0.85);
-            }
-        }
-
-        @media (max-height: 600px) {
-            .escenario {
-                transform: scale(0.8);
+                transform: scale(0.95);
             }
         }
 
@@ -56,30 +53,30 @@
             position: relative;
             transform-style: preserve-3d;
             cursor: pointer;
-            background: transparent;
             display: inline-block;
+            background: transparent;
+            /* Sin fondo negro */
         }
 
-        /* La imagen se muestra COMPLETA y la tarjeta toma su tamaño real */
-        .invitacion-base {
-            display: block;
-            width: auto;
-            height: auto;
-            max-width: 90vw;
-            max-height: 85vh;
-            object-fit: contain;
+        /* Contenedor de la imagen principal */
+        .imagen-container {
+            position: relative;
+            display: inline-block;
+            line-height: 0;
         }
 
-        /* Reemplazamos el div con fondo por una imagen real para que se vea completa */
+        /* La imagen de invitación se ve COMPLETA y ocupa su tamaño natural */
         .invitacion-img {
             display: block;
             width: auto;
             height: auto;
-            max-width: 90vw;
+            max-width: 92vw;
             max-height: 85vh;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
+        /* Solapa negra con su propia imagen de fondo */
         .solapa-negra {
             position: absolute;
             top: 0;
@@ -87,26 +84,29 @@
             width: 50%;
             height: 100%;
             background-color: #000;
-            background-image: url('image_8ea266.png'); 
+            background-image: url('image_8ea266.png');
             background-size: cover;
-            background-position: left center;
+            background-position: center;
+            background-repeat: no-repeat;
             z-index: 10;
             transform-origin: left;
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
         }
 
+        /* Cinta y moño */
         .capa-liston-completa {
             position: absolute;
             top: 45%;
             left: 0;
             width: 100%;
-            height: 100px;
+            height: auto;
             z-index: 20;
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
             pointer-events: none;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         .cinta-horizontal {
@@ -128,7 +128,7 @@
         .mono-img {
             width: 100%;
             height: auto;
-            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
+            filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5));
         }
 
         .remover-todo {
@@ -145,15 +145,17 @@
             bottom: -40px;
             left: 50%;
             transform: translateX(-50%);
-            color: black;
-            font-size: 0.8em;
+            color: #333;
+            font-size: 0.85em;
             text-align: center;
             white-space: nowrap;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px white;
-            background: rgba(255,255,255,0.5);
-            padding: 4px 12px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -163,20 +165,22 @@
 
     <div class="escenario">
         <div class="tarjeta" id="invitacionCard" onclick="abrirInvitacion()">
-            
-            <!-- Imagen real que se ve COMPLETA, tal como es -->
-            <img src="invitacion-marlin.png" alt="Invitación" class="invitacion-img" id="imgInvitacion">
+            <div class="imagen-container">
+                <!-- Imagen de invitación COMPLETA, tal como es -->
+                <img src="invitacion-marlin.png" alt="Invitación" class="invitacion-img" id="imgInvitacion">
 
-            <div class="capa-liston-completa" id="miListon">
-                <div class="cinta-horizontal"></div>
-                <div class="mono-contenedor">
-                    <img src="mono-flores.png" alt="Moño" class="mono-img">
+                <!-- Solapa negra (se ajustará al tamaño de la imagen) -->
+                <div class="solapa-negra" id="solapaNegra"></div>
+
+                <!-- Cinta y moño -->
+                <div class="capa-liston-completa" id="miListon">
+                    <div class="cinta-horizontal"></div>
+                    <div class="mono-contenedor">
+                        <img src="mono-flores.png" alt="Moño" class="mono-img">
+                    </div>
                 </div>
             </div>
-
-            <div class="solapa-negra" id="solapaNegra"></div>
-
-            <div class="instruccion">Toca para abrir</div>
+            <div class="instruccion">✨ Toca para abrir ✨</div>
         </div>
     </div>
 
@@ -188,12 +192,12 @@
             const tarjeta = document.getElementById('invitacionCard');
 
             if (!ejecutado) {
-                liston.classList.add('remover-todo');
+                if (liston) liston.classList.add('remover-todo');
                 setTimeout(() => {
                     tarjeta.classList.add('abierta');
                 }, 400);
                 setTimeout(() => {
-                    if(liston) liston.remove();
+                    if (liston) liston.remove();
                 }, 1600);
                 ejecutado = true;
             } else {
@@ -202,26 +206,35 @@
         }
 
         // Ajustar la solapa negra al tamaño exacto de la imagen
-        function ajustarSolapa() {
+        function ajustarElementos() {
             const img = document.getElementById('imgInvitacion');
             const solapa = document.getElementById('solapaNegra');
+            const liston = document.getElementById('miListon');
+
             if (img && solapa) {
-                const imgRect = img.getBoundingClientRect();
-                const imgWidth = imgRect.width;
-                const imgHeight = imgRect.height;
+                const imgWidth = img.offsetWidth;
+                const imgHeight = img.offsetHeight;
+
                 solapa.style.width = (imgWidth / 2) + 'px';
                 solapa.style.height = imgHeight + 'px';
             }
+
+            // Ajustar posición del listón
+            if (img && liston) {
+                const imgHeight = img.offsetHeight;
+                liston.style.top = (imgHeight * 0.4) + 'px';
+            }
         }
 
+        // Ejecutar cuando la imagen cargue y cuando cambie el tamaño de la ventana
         window.addEventListener('load', function() {
             const img = document.getElementById('imgInvitacion');
             if (img.complete) {
-                ajustarSolapa();
+                ajustarElementos();
             } else {
-                img.addEventListener('load', ajustarSolapa);
+                img.addEventListener('load', ajustarElementos);
             }
-            window.addEventListener('resize', ajustarSolapa);
+            window.addEventListener('resize', ajustarElementos);
         });
     </script>
 

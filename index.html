@@ -89,42 +89,37 @@
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
         }
 
+        /* Contenedor de cinta + moño - TODO junto se desvanece hacia la izquierda */
+        .capa-liston-completa {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
+            pointer-events: none;
+        }
+
         /* Cinta dorada en TODA la tarjeta (100% de ancho) */
         .cinta-dorada {
             position: absolute;
             width: 100%;
             height: 28px;
             background: var(--brillo-cinta);
-            z-index: 15;
             top: 50%;
             transform: translateY(-50%);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            pointer-events: none;
         }
 
-        /* Contenedor del moño - solo sobre la parte negra (mitad izquierda) */
-        .capa-mono {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            z-index: 20;
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Moño GRANDE centrado en la parte negra */
+        /* Contenedor del moño - solo sobre la parte negra */
         .mono-contenedor {
             position: absolute;
-            left: 50%;
+            left: 25%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 75%;
-            min-width: 140px;
+            width: 40%;
+            min-width: 130px;
             z-index: 25;
             display: flex;
             justify-content: center;
@@ -137,6 +132,7 @@
             filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
         }
 
+        /* Efecto de desvanecerse hacia la izquierda */
         .remover-todo {
             transform: translateX(-150%) rotate(-5deg);
             opacity: 0;
@@ -176,11 +172,11 @@
 
                 <div class="solapa-negra" id="solapaNegra"></div>
 
-                <!-- Cinta dorada en TODA la tarjeta -->
-                <div class="cinta-dorada"></div>
-
-                <!-- Moño solo en la parte negra -->
-                <div class="capa-mono" id="miMono">
+                <!-- Cinta + Moño - TODO junto se desvanece -->
+                <div class="capa-liston-completa" id="miListonCompleto">
+                    <!-- Cinta dorada en TODA la tarjeta -->
+                    <div class="cinta-dorada"></div>
+                    <!-- Moño GRANDE sobre la parte negra -->
                     <div class="mono-contenedor">
                         <img src="mono-flores.png" alt="Moño" class="mono-img">
                     </div>
@@ -194,16 +190,16 @@
         let ejecutado = false;
 
         function abrirInvitacion() {
-            const miMono = document.getElementById('miMono');
+            const listonCompleto = document.getElementById('miListonCompleto');
             const tarjeta = document.getElementById('invitacionCard');
 
             if (!ejecutado) {
-                if (miMono) miMono.classList.add('remover-todo');
+                if (listonCompleto) listonCompleto.classList.add('remover-todo');
                 setTimeout(() => {
                     tarjeta.classList.add('abierta');
                 }, 400);
                 setTimeout(() => {
-                    if (miMono) miMono.remove();
+                    if (listonCompleto) listonCompleto.remove();
                 }, 1600);
                 ejecutado = true;
             } else {
@@ -214,20 +210,12 @@
         function ajustarElementos() {
             const img = document.getElementById('imgInvitacion');
             const solapa = document.getElementById('solapaNegra');
-            const capaMono = document.getElementById('miMono');
 
             if (img && solapa) {
                 const imgWidth = img.offsetWidth;
                 const imgHeight = img.offsetHeight;
                 solapa.style.width = (imgWidth / 2) + 'px';
                 solapa.style.height = imgHeight + 'px';
-            }
-
-            if (img && capaMono) {
-                const imgWidth = img.offsetWidth;
-                const imgHeight = img.offsetHeight;
-                capaMono.style.width = (imgWidth / 2) + 'px';
-                capaMono.style.height = imgHeight + 'px';
             }
         }
 

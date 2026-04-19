@@ -42,7 +42,6 @@
             padding: 20px;
         }
 
-        /* Ajuste para móviles */
         @media (max-width: 600px) {
             .escenario {
                 transform: scale(0.95);
@@ -55,17 +54,14 @@
             cursor: pointer;
             display: inline-block;
             background: transparent;
-            /* Sin fondo negro */
         }
 
-        /* Contenedor de la imagen principal */
         .imagen-container {
             position: relative;
             display: inline-block;
             line-height: 0;
         }
 
-        /* La imagen de invitación se ve COMPLETA y ocupa su tamaño natural */
         .invitacion-img {
             display: block;
             width: auto;
@@ -76,7 +72,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
-        /* Solapa negra con su propia imagen de fondo */
         .solapa-negra {
             position: absolute;
             top: 0;
@@ -94,13 +89,26 @@
             box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
         }
 
-        /* Cinta y moño */
-        .capa-liston-completa {
+        /* Cinta dorada en TODA la tarjeta (100% de ancho) */
+        .cinta-dorada {
             position: absolute;
-            top: 45%;
-            left: 0;
             width: 100%;
-            height: auto;
+            height: 28px;
+            background: var(--brillo-cinta);
+            z-index: 15;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+        }
+
+        /* Contenedor del moño - solo sobre la parte negra (mitad izquierda) */
+        .capa-mono {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
             z-index: 20;
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
             pointer-events: none;
@@ -109,26 +117,24 @@
             justify-content: center;
         }
 
-        .cinta-horizontal {
-            position: absolute;
-            width: 100%;
-            height: 18px;
-            background: var(--brillo-cinta);
-            z-index: 21;
-        }
-
+        /* Moño GRANDE centrado en la parte negra */
         .mono-contenedor {
             position: absolute;
-            left: 25%;
-            transform: translateX(-50%);
-            width: 60%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 75%;
+            min-width: 140px;
             z-index: 25;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .mono-img {
             width: 100%;
             height: auto;
-            filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5));
+            filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.4));
         }
 
         .remover-todo {
@@ -166,21 +172,21 @@
     <div class="escenario">
         <div class="tarjeta" id="invitacionCard" onclick="abrirInvitacion()">
             <div class="imagen-container">
-                <!-- Imagen de invitación COMPLETA, tal como es -->
                 <img src="invitacion-marlin.png" alt="Invitación" class="invitacion-img" id="imgInvitacion">
 
-                <!-- Solapa negra (se ajustará al tamaño de la imagen) -->
                 <div class="solapa-negra" id="solapaNegra"></div>
 
-                <!-- Cinta y moño -->
-                <div class="capa-liston-completa" id="miListon">
-                    <div class="cinta-horizontal"></div>
+                <!-- Cinta dorada en TODA la tarjeta -->
+                <div class="cinta-dorada"></div>
+
+                <!-- Moño solo en la parte negra -->
+                <div class="capa-mono" id="miMono">
                     <div class="mono-contenedor">
                         <img src="mono-flores.png" alt="Moño" class="mono-img">
                     </div>
                 </div>
             </div>
-            <div class="instruccion">✨ Toca para abrir ✨</div>
+            <div class="instruccion">Toca para abrir</div>
         </div>
     </div>
 
@@ -188,16 +194,16 @@
         let ejecutado = false;
 
         function abrirInvitacion() {
-            const liston = document.getElementById('miListon');
+            const miMono = document.getElementById('miMono');
             const tarjeta = document.getElementById('invitacionCard');
 
             if (!ejecutado) {
-                if (liston) liston.classList.add('remover-todo');
+                if (miMono) miMono.classList.add('remover-todo');
                 setTimeout(() => {
                     tarjeta.classList.add('abierta');
                 }, 400);
                 setTimeout(() => {
-                    if (liston) liston.remove();
+                    if (miMono) miMono.remove();
                 }, 1600);
                 ejecutado = true;
             } else {
@@ -205,28 +211,26 @@
             }
         }
 
-        // Ajustar la solapa negra al tamaño exacto de la imagen
         function ajustarElementos() {
             const img = document.getElementById('imgInvitacion');
             const solapa = document.getElementById('solapaNegra');
-            const liston = document.getElementById('miListon');
+            const capaMono = document.getElementById('miMono');
 
             if (img && solapa) {
                 const imgWidth = img.offsetWidth;
                 const imgHeight = img.offsetHeight;
-
                 solapa.style.width = (imgWidth / 2) + 'px';
                 solapa.style.height = imgHeight + 'px';
             }
 
-            // Ajustar posición del listón
-            if (img && liston) {
+            if (img && capaMono) {
+                const imgWidth = img.offsetWidth;
                 const imgHeight = img.offsetHeight;
-                liston.style.top = (imgHeight * 0.4) + 'px';
+                capaMono.style.width = (imgWidth / 2) + 'px';
+                capaMono.style.height = imgHeight + 'px';
             }
         }
 
-        // Ejecutar cuando la imagen cargue y cuando cambie el tamaño de la ventana
         window.addEventListener('load', function() {
             const img = document.getElementById('imgInvitacion');
             if (img.complete) {

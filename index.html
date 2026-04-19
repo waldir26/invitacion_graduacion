@@ -28,53 +28,64 @@
             z-index: -1;
         }
 
-        /* ESCENARIO RESPONSIVe */
+        /* ESCENARIO - ahora se adapta al tamaño de la imagen */
         .escenario {
             perspective: 1500px;
-            width: 350px;
-            height: 550px;
             z-index: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             transition: transform 0.3s ease;
+            padding: 20px;
         }
 
-        /* Media query para pantallas pequeñasss (celulares) */
-        @media (max-width: 400px) {
+        /* Media query para pantallas pequeñas */
+        @media (max-width: 500px) {
             .escenario {
-                transform: scale(0.8); /* Reduce el tamaño al 80% en móviles pequeños */
+                transform: scale(0.85);
             }
         }
 
         @media (max-height: 600px) {
             .escenario {
-                transform: scale(0.7); /* Reduce si la pantalla es muy bajita */
+                transform: scale(0.8);
             }
         }
 
         .tarjeta {
-            width: 350px; height: 550px;
             position: relative;
             transform-style: preserve-3d;
             cursor: pointer;
-            background-color: #000; 
+            background: transparent;
+            display: inline-block;
         }
 
+        /* La imagen se muestra COMPLETA y la tarjeta toma su tamaño real */
         .invitacion-base {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url('invitacion-marlin.png'); 
-            background-size: cover; 
-            background-position: center;
-            z-index: 1;
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 90vw;
+            max-height: 85vh;
+            object-fit: contain;
+        }
+
+        /* Reemplazamos el div con fondo por una imagen real para que se vea completa */
+        .invitacion-img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 90vw;
+            max-height: 85vh;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .solapa-negra {
             position: absolute;
-            top: 0; left: 0;
-            width: 50%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
             background-color: #000;
             background-image: url('image_8ea266.png'); 
             background-size: cover;
@@ -87,8 +98,10 @@
 
         .capa-liston-completa {
             position: absolute;
-            top: 45%; left: 0;
-            width: 100%; height: 100px;
+            top: 45%;
+            left: 0;
+            width: 100%;
+            height: 100px;
             z-index: 20;
             transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s;
             pointer-events: none;
@@ -98,7 +111,8 @@
 
         .cinta-horizontal {
             position: absolute;
-            width: 100%; height: 18px;
+            width: 100%;
+            height: 18px;
             background: var(--brillo-cinta);
             z-index: 21;
         }
@@ -112,7 +126,8 @@
         }
 
         .mono-img {
-            width: 100%; height: auto;
+            width: 100%;
+            height: auto;
             filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));
         }
 
@@ -126,10 +141,19 @@
         }
 
         .instruccion {
-            position: absolute; bottom: -40px; color: black;
-            font-size: 0.8em; text-align: center; width: 100%;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: black;
+            font-size: 0.8em;
+            text-align: center;
+            white-space: nowrap;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px black;
+            text-shadow: 1px 1px 2px white;
+            background: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
         }
     </style>
 </head>
@@ -140,7 +164,8 @@
     <div class="escenario">
         <div class="tarjeta" id="invitacionCard" onclick="abrirInvitacion()">
             
-            <div class="invitacion-base"></div>
+            <!-- Imagen real que se ve COMPLETA, tal como es -->
+            <img src="invitacion-marlin.png" alt="Invitación" class="invitacion-img" id="imgInvitacion">
 
             <div class="capa-liston-completa" id="miListon">
                 <div class="cinta-horizontal"></div>
@@ -149,7 +174,7 @@
                 </div>
             </div>
 
-            <div class="solapa-negra"></div>
+            <div class="solapa-negra" id="solapaNegra"></div>
 
             <div class="instruccion">Toca para abrir</div>
         </div>
@@ -168,13 +193,36 @@
                     tarjeta.classList.add('abierta');
                 }, 400);
                 setTimeout(() => {
-                    liston.remove();
+                    if(liston) liston.remove();
                 }, 1600);
                 ejecutado = true;
             } else {
                 tarjeta.classList.toggle('abierta');
             }
         }
+
+        // Ajustar la solapa negra al tamaño exacto de la imagen
+        function ajustarSolapa() {
+            const img = document.getElementById('imgInvitacion');
+            const solapa = document.getElementById('solapaNegra');
+            if (img && solapa) {
+                const imgRect = img.getBoundingClientRect();
+                const imgWidth = imgRect.width;
+                const imgHeight = imgRect.height;
+                solapa.style.width = (imgWidth / 2) + 'px';
+                solapa.style.height = imgHeight + 'px';
+            }
+        }
+
+        window.addEventListener('load', function() {
+            const img = document.getElementById('imgInvitacion');
+            if (img.complete) {
+                ajustarSolapa();
+            } else {
+                img.addEventListener('load', ajustarSolapa);
+            }
+            window.addEventListener('resize', ajustarSolapa);
+        });
     </script>
 
 </body>
